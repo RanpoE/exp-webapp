@@ -29,13 +29,13 @@ function Copyright(props) {
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme({
-    palette: {
-        mode: 'dark'
-      },
+  palette: {
+    mode: 'dark'
+  },
 });
 
 export default function Login() {
-  const handleSubmit = (event)=> {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -56,10 +56,8 @@ export default function Login() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <MonetizationOnIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
+
+          <Typography component="h3" variant="h5">
             Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -83,10 +81,10 @@ export default function Login() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth

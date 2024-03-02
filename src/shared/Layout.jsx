@@ -1,12 +1,13 @@
 import { Outlet } from "react-router-dom";
-import { Navigation } from "./Navigation";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
+import PersistentDrawerLeft from "./Drawer";
 
 export const Layout = () => {
     return (
-        <Container maxWidth="lg">
-            <Navigation />
-            <Outlet />
-        </Container>
+        <Box>
+            <PersistentDrawerLeft>
+                <Outlet />
+            </PersistentDrawerLeft>
+        </Box>
     )
 }
