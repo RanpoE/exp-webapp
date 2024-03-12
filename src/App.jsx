@@ -1,10 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import Login from './pages/Login';
-// import './App.css'
 import { Dashboard } from "./pages/Dashboard";
 import { Layout } from "./shared/Layout";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Login, SignUp } from './pages/Login'
+import { SignUp } from './pages/Login'
 import { Home } from "./shared/Home";
 import { ProtectedRoutes } from "./shared/ProtectedRoutes";
 

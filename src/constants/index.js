@@ -14,7 +14,7 @@ export const userDataExpenses = {
             id: 'utilities',
             label: 'utilities',
             value: 20
-        },{
+        }, {
             id: 'entertainment',
             label: 'entertainment',
             value: 15
@@ -22,12 +22,20 @@ export const userDataExpenses = {
     ],
 }
 
-export const userDataAssets = {
-    savings: 100,
-    checkings: 200,
-    investment: 20,
-    cc_balance: 300,
-}
+export const userDataAssets = [
+    {
+        title: 'Savings',
+        value: 10000
+    }, {
+        title: 'Investment',
+        value: 2000,
+    }, {
+        title: 'CC Balance',
+        value: 3000
+    }, {
+        title: 'Target',
+        value: 99999
+    }]
 
 export const nivoColors = [
     // '#EEF5FF',

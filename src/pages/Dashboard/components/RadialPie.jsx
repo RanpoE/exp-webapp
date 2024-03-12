@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { userDataExpenses } from "../../constants";
+import { userDataExpenses } from "../../../constants";
 
 import { ResponsivePie } from "@nivo/pie";
 import { Box } from "@mui/material";

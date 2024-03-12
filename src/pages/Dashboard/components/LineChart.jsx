@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import { nivoColors } from '../../constants'
+import { nivoColors } from '../../../constants'
 import { ResponsiveLine } from '@nivo/line'
 
 
