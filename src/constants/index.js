@@ -28,3 +28,10 @@ export const userDataAssets = {
     investment: 20,
     cc_balance: 300,
 }
+
+export const nivoColors = [
+    // '#EEF5FF',
+    '#B4D4FF',
+    '#86B6F6',
+    '#176B87',
+]

@@ -1,13 +1,11 @@
 import { Outlet } from "react-router-dom";
-import { Box } from "@mui/material";
-import PersistentDrawerLeft from "./Drawer";
+import { TopNav } from "./TopNav";
 
 export const Layout = () => {
     return (
-        <Box>
-            <PersistentDrawerLeft>
-                <Outlet />
-            </PersistentDrawerLeft>
-        </Box>
+        <div className="min-h-full">
+            <TopNav />
+            <Outlet />
+        </div>
     )
 }

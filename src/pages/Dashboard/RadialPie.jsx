@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { userDataExpenses } from "../../../constants";
+import { userDataExpenses } from "../../constants";
 
 import { ResponsivePie } from "@nivo/pie";
 import { Box } from "@mui/material";
@@ -45,7 +45,6 @@ const RadialPie = () => {
         const dateExpenses = userDataExpenses['2023-01-10'] || []
         
         setData(dateExpenses)
-        console.log(dateExpenses)
     }, []);
 
     return (
@@ -67,6 +66,7 @@ const RadialPie = () => {
                         ]
                     ]
                 }}
+                colors={{scheme: "blues"}}
                 arcLinkLabelsSkipAngle={10}
                 arcLinkLabelsTextColor="#333333"
                 arcLinkLabelsThickness={2}
@@ -86,7 +86,7 @@ const RadialPie = () => {
                         id: 'dots',
                         type: 'patternDots',
                         background: 'inherit',
-                        color: 'rgba(255, 255, 255, 0.3)',
+                        color: 'rgba(255, 255, 255, 1)',
                         size: 4,
                         padding: 1,
                         stagger: true
@@ -95,60 +95,10 @@ const RadialPie = () => {
                         id: 'lines',
                         type: 'patternLines',
                         background: 'inherit',
-                        color: 'rgba(255, 255, 255, 0.3)',
+                        color: 'rgba(255, 255, 255, 1)',
                         rotation: -45,
                         lineWidth: 6,
                         spacing: 10
-                    }
-                ]}
-                fill={[
-                    {
-                        match: {
-                            id: 'ruby'
-                        },
-                        id: 'dots'
-                    },
-                    {
-                        match: {
-                            id: 'c'
-                        },
-                        id: 'dots'
-                    },
-                    {
-                        match: {
-                            id: 'go'
-                        },
-                        id: 'dots'
-                    },
-                    {
-                        match: {
-                            id: 'python'
-                        },
-                        id: 'dots'
-                    },
-                    {
-                        match: {
-                            id: 'scala'
-                        },
-                        id: 'lines'
-                    },
-                    {
-                        match: {
-                            id: 'lisp'
-                        },
-                        id: 'lines'
-                    },
-                    {
-                        match: {
-                            id: 'elixir'
-                        },
-                        id: 'lines'
-                    },
-                    {
-                        match: {
-                            id: 'javascript'
-                        },
-                        id: 'lines'
                     }
                 ]}
                 legends={[
@@ -170,7 +120,7 @@ const RadialPie = () => {
                             {
                                 on: 'hover',
                                 style: {
-                                    itemTextColor: '#000'
+                                    itemTextColor: '#fff'
                                 }
                             }
                         ]

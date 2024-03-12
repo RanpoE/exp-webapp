@@ -21,7 +21,7 @@ export function Navigation() {
           </Typography>
           <NotificationsNoneIcon style={{
             marginRight: 30
-          }}/>
+          }} />
           <Link to="/">
             <IconButton
               size="large"
