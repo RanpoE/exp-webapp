@@ -5,6 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { SignUp } from './pages/Login'
 import { Home } from "./shared/Home";
 import { ProtectedRoutes } from "./shared/ProtectedRoutes";
+import { Report } from "./pages/Report";
 
 const defaultTheme = createTheme({
   palette: {
@@ -23,6 +24,7 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/report" element={<Report />} />
             </Route>
           </Route>
         </Routes>

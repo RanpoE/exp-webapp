@@ -10,30 +10,30 @@ export const TopNav = () => {
         // Initialize state with undefined width/height so server and client renders match
         // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
         const [windowSize, setWindowSize] = useState({
-          width: undefined,
-          height: undefined,
+            width: undefined,
+            height: undefined,
         });
         useEffect(() => {
-          // Handler to call on window resize
-          function handleResize() {
-            // Set window width/height to state
-            if (window.innerWidth < 749) setToogleMenu(false)
-            setWindowSize({
-              width: window.innerWidth,
-              height: window.innerHeight,
-            });
-          }
-          // Add event listener
-          window.addEventListener("resize", handleResize);
-          // Call handler right away so state gets updated with initial window size
-          handleResize();
-          // Remove event listener on cleanup
-          return () => window.removeEventListener("resize", handleResize);
+            // Handler to call on window resize
+            function handleResize() {
+                // Set window width/height to state
+                if (window.innerWidth < 749) setToogleMenu(false)
+                setWindowSize({
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                });
+            }
+            // Add event listener
+            window.addEventListener("resize", handleResize);
+            // Call handler right away so state gets updated with initial window size
+            handleResize();
+            // Remove event listener on cleanup
+            return () => window.removeEventListener("resize", handleResize);
         }, []); // Empty array ensures that effect is only run on mount
         return windowSize;
-      }
+    }
 
-    const handleToggle = useCallback(() => setToogleMenu(prev=>!prev), [])
+    const handleToggle = useCallback(() => setToogleMenu(prev => !prev), [])
     return (
         <>
             <nav className="bg-gray-800">
@@ -45,11 +45,10 @@ export const TopNav = () => {
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
-                                    <a href="#" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Team</a>
+                                    <a href="/dashboard" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                    <a href="/report" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report</a>
                                     <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Projects</a>
                                     <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Calendar</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Reports</a>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +63,7 @@ export const TopNav = () => {
                                 </button>
                                 <div className="relative ml-3">
                                     <div>
-                                        <button type="button" onClick={handleToggle}  className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <button type="button" onClick={handleToggle} className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                             <span className="absolute -inset-1.5"></span>
                                             <span className="sr-only" >Open user menu</span>
                                             <img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
@@ -131,7 +130,7 @@ export const TopNav = () => {
                 <div className="flex items-center justify-between mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
                     <h1>
-                        <AddIcon className="hover:text-blue-300 cursor-pointer"/>
+                        <AddIcon className="hover:text-blue-300 cursor-pointer" />
                     </h1>
                 </div>
             </header>

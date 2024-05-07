@@ -34,7 +34,7 @@ export const userDataAssets = [
         value: 3000
     }, {
         title: 'Target',
-        value: 99999
+        value: 9999999
     }]
 
 export const nivoColors = [
