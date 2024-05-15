@@ -3,7 +3,6 @@ import AddIcon from '@mui/icons-material/Add';
 
 export const TopNav = () => {
     const [toggleMenu, setToogleMenu] = useState(false)
-
     const size = useWindowSize();
 
     function useWindowSize() {
@@ -128,10 +127,10 @@ export const TopNav = () => {
 
             <header className="bg-white shadow">
                 <div className="flex items-center justify-between mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
-                    <h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Expenses</h1>
+                    {/* <h1>
                         <AddIcon className="hover:text-blue-300 cursor-pointer" />
-                    </h1>
+                    </h1> */}
                 </div>
             </header>
         </>

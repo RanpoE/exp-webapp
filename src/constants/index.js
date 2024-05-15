@@ -43,3 +43,26 @@ export const nivoColors = [
     '#86B6F6',
     '#176B87',
 ]
+
+export const reportData = [
+    {
+        name: 'Groceries',
+        amount: 2000,
+        time: '2024-01-02'
+    },
+    {
+        name: 'Internet bill',
+        amount: 1500,
+        time: '2024-01-02'
+    },
+    {
+        name: 'Electric bill',
+        amount: 1300,
+        time: '2024-01-02'
+    },
+    {
+        name: 'Other',
+        amount: 500,
+        time: '2024-01-02'
+    },
+]
