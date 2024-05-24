@@ -16,10 +16,10 @@ const style = {
   p: 4,
 };
 
-export const FormModal = ({ children, open = false, handleClose }) => {
+export function FormModal({ children, open, handleClose }){
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={handleClose} className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <Box sx={style}>
           {children}
         </Box>
