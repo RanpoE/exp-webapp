@@ -3,6 +3,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 export const TopNav = () => {
     const [toggleMenu, setToogleMenu] = useState(false)
+    const [toggleMenuProfile, setToogleMenuProfile] = useState(false)
     const size = useWindowSize();
 
     function useWindowSize() {
@@ -33,6 +34,11 @@ export const TopNav = () => {
     }
 
     const handleToggle = useCallback(() => setToogleMenu(prev => !prev), [])
+
+    const handleToggleProfile = useCallback(() => setToogleMenuProfile(prev => !prev), [])
+
+    const navLinkStyle = "text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+
     return (
         <>
             <nav className="bg-gray-800">
@@ -92,17 +98,17 @@ export const TopNav = () => {
                     </div>
                 </div>
                 <div className="md:hidden" id="mobile-menu">
-                    <div className={`space-y-1 px-2 pb-3 pt-2 sm:px-3 ${toggleMenu ? '': 'hidden'}`}>
+                    <div className={`space-y-1 px-2 pb-3 pt-2 sm:px-3 ${toggleMenu ? '' : 'hidden'}`}>
                         <a href="#" className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                        <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
-                        <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
-                        <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
-                        <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
+                        <a href="#" className={navLinkStyle}>Team</a>
+                        <a href="#" className={navLinkStyle}>Projects</a>
+                        <a href="#" className={navLinkStyle}>Calendar</a>
+                        <a href="#" className={navLinkStyle}>Reports</a>
                     </div>
                     <div className="border-t border-gray-700 pb-3 pt-4">
                         <div className="flex items-center px-5">
                             <div className="flex-shrink-0">
-                                <img className="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                <img className="h-10 w-10 rounded-full cursor-pointer hover:opacity-80" onClick={handleToggleProfile} src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
                             </div>
                             <div className="ml-3">
                                 <div className="text-base font-medium leading-none text-white">Tom Cook</div>
@@ -116,7 +122,7 @@ export const TopNav = () => {
                                 </svg>
                             </button>
                         </div>
-                        <div className="mt-3 space-y-1 px-2">
+                        <div className={`mt-3 space-y-1 px-2 ${!toggleMenuProfile && 'hidden'}`}>
                             <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Your Profile</a>
                             <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Settings</a>
                             <a href="/" className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign out</a>
