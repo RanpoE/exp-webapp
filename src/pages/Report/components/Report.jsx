@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { reportData } from '../../../constants';
 import { FormModal } from '../../../shared/FormModal';
@@ -22,6 +22,8 @@ function ReportList() {
     }
 
     getReport()
+
+    return () => setData([])
 
   }, [])
 
