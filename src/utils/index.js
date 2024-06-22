@@ -3,3 +3,7 @@ export const getCurrentDate = () => {
 
     return today;
 }
+
+export const capitalizeWord = word => {
+    return word && word[0].toUpperCase() + word.slice(1)
+}

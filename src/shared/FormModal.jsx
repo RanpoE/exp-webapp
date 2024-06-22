@@ -9,11 +9,9 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 425,
+  height: 520,
   bgcolor: '#fff',
-  border: '2px solid #000',
-  boxShadow: 24,
-  padding: 4,
 };
 
 export function FormModal({ children, open, handleClose }){

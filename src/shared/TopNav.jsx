@@ -1,10 +1,17 @@
 import { useCallback, useState, useEffect } from "react"
 import AddIcon from '@mui/icons-material/Add';
+import { useLocation } from "react-router-dom";
+import { capitalizeWord } from "../utils";
 
 export const TopNav = () => {
+    const location = useLocation();
     const [toggleMenu, setToogleMenu] = useState(false)
     const [toggleMenuProfile, setToogleMenuProfile] = useState(false)
     const size = useWindowSize();
+
+    const { pathname } = location;
+
+    const routePath = pathname.replace('/', '')
 
     function useWindowSize() {
         // Initialize state with undefined width/height so server and client renders match
@@ -37,7 +44,13 @@ export const TopNav = () => {
 
     const handleToggleProfile = useCallback(() => setToogleMenuProfile(prev => !prev), [])
 
+    const navigationList = ['dashboard', 'report']
+
     const navLinkStyle = "text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+
+    const activeLink = 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium'
+
+    const inactiveLink = 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'
 
     return (
         <>
@@ -50,17 +63,24 @@ export const TopNav = () => {
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
-                                    <a href="/dashboard" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                    <a href="/report" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Projects</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Calendar</a>
+                                    {
+                                        navigationList.map(item =>
+                                            <a
+                                                href={`/${item}`}
+                                                key={item}
+                                                className={item === routePath ? activeLink : inactiveLink}
+                                                aria-current="page">
+                                                {capitalizeWord(item)}
+                                            </a>
+                                        )
+                                    }
                                 </div>
                             </div>
                         </div>
                         <div className="hidden md:block">
                             <div className="ml-4 flex items-center md:ml-6">
                                 <button type="button" className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                    <span className="absolute -inset-1.5"></span>
+                                    <span className="absolute -inset-1.5">12</span>
                                     <span className="sr-only">View notifications</span>
                                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -133,7 +153,7 @@ export const TopNav = () => {
 
             <header className="bg-white shadow">
                 <div className="flex items-center justify-between mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Expenses</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 capitalize">{routePath}</h1>
                     {/* <h1>
                         <AddIcon className="hover:text-blue-300 cursor-pointer" />
                     </h1> */}
