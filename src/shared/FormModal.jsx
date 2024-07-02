@@ -10,8 +10,9 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 425,
-  height: 520,
+  height: 400,
   bgcolor: '#fff',
+  borderRadius: 2
 };
 
 export function FormModal({ children, open, handleClose }){

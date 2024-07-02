@@ -42,10 +42,10 @@ function ReportList() {
 
   return (
     <ul role="list" className="divide-y divide-gray-100">
-      {data.map((item, i) => {
+      {data.map((item) => {
         const amount = `${item?.amount.toLocaleString()}.00`
         return (
-          <li className="flex justify-between gap-x-6 py-5" key={i}>
+          <li className="flex justify-between gap-x-6 py-5" key={item.name}>
             <div className="flex min-w-0 gap-x-4 items-center">
               <span>
                 <MonetizationOnIcon fontSize='large' />
@@ -125,26 +125,50 @@ function CreateRecord({ handleClose }) {
   ];
 
   return (
+    // <div>
+    //   <h2 className='text-xl mb-2'>Add record</h2>
+    //   <form onSubmit={handleSubmit}>
+    //     <div>
+    //       <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">Title</label>
+    //       <div className="mt-2">
+    //         <input id="title" name="title" type="text" autoComplete="off" required className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+    //       </div>
+    //     </div>
+    //     <div>
+    //       <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">Amount</label>
+    //       <div className="mt-2">
+    //         <input id="amount" name="amount" type="number" autoComplete="off" required className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+    //       </div>
+    //     </div>
+    //     <div className='mt-4'>
+    //       <button type="submit" className="flex w-full justify-center rounded-md bg-gray-800 px-3 p-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Create</button>
+    //     </div>
+    //   </form>
+    // </div>
     <>
-      {/* <h2 className='text-xl mb-2'>Add record</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">Title</label>
-          <div className="mt-2">
-            <input id="title" name="title" type="text" autoComplete="off" required className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+      <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+        <h3 class="text-xl font-semibold text-gray-900">
+          Add new record
+        </h3>
+      </div>
+      <div className="p-4 md:p-5">
+        <form className="space-y-4" action="#">
+          <div>
+            <label for="title" className="block mb-2 text-sm font-medium">Title</label>
+            <input type="text" name="title" id="title" className="border border-gray-30 text-sm rounded-lg block w-full p-2.5 text-gray-700" required />
           </div>
-        </div>
-        <div>
-          <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">Amount</label>
-          <div className="mt-2">
-            <input id="amount" name="amount" type="number" autoComplete="off" required className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          <div>
+            <label for="amount" className="block mb-2 text-sm font-medium">Amount</label>
+            <input type="number" name="amount" className="border border-gray-30 text-sm rounded-lgblock w-full p-2.5 text-gray-700" required />
           </div>
-        </div>
-        <div className='mt-4'>
-          <button type="submit" className="flex w-full justify-center rounded-md bg-gray-800 px-3 p-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Create</button>
-        </div>
-      </form> */}
-      <Stepper activeStep={0} alternativeLabel>
+
+          <button type="submit" className="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none font-medium rounded-lg my-2 text-sm px-5 py-2.5 text-center">Create </button>
+
+        </form>
+      </div>
+    </>
+  )
+  {/* <Stepper activeStep={0} alternativeLabel>
         {steps.map((item) => (
           <Step key={item.id}>
             <StepLabel>
@@ -155,7 +179,6 @@ function CreateRecord({ handleClose }) {
             }
           </Step>
         ))}
-      </Stepper>
-    </>
-  )
+      </Stepper> */}
+  {/* </div> */ }
 }
