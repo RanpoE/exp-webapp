@@ -1,13 +1,11 @@
-import { useState } from "react"
 import { Login } from "../pages/Login";
-export function Home(){
-    const [logged] = useState(false);
+import { Navigate } from "react-router-dom";
+export function Home() {
+    const { logged } = JSON.parse(localStorage.getItem('userInfo', '')) || false
 
     return (
         logged ? (
-            <div className="flex w-screen h-screen">
-                <h1 className="text-3xl mx-auto">Welcome user</h1>
-            </div>
+            <Navigate to="/dashboard" replace />
         ) : (<Login />)
     )
 }
