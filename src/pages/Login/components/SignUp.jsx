@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { json, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export const SignUp = () => {
     const [logged] = useState(false)
@@ -34,7 +34,6 @@ export const SignUp = () => {
                     localStorage.setItem('userInfo', JSON.stringify({ ...userInput, logged: true }))
                     navigate('/')
                 }
-
             } catch (error) {
                 console.error(error)
             }

@@ -31,7 +31,8 @@ export const Login = () => {
             const response = await fetch(request)
             console.log(response)
             if (response.status === 200) {
-                localStorage.setItem('userInfo', JSON.stringify({ ...userInput, logged: true }))
+                const { user } = await response.json();
+                localStorage.setItem('userInfo', JSON.stringify({ ...user, logged: true }))
                 navigate('/dashboard')
             }
 
