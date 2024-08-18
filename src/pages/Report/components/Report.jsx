@@ -1,19 +1,30 @@
 import { useEffect, useState } from 'react'
 
+
+import dayjs from 'dayjs';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AddIcon from '@mui/icons-material/Add';
 
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
+import { makeStyles } from '@mui/material';
+
+// import Stepper from '@mui/material/Stepper';
+// import Step from '@mui/material/Step';
+// import StepLabel from '@mui/material/StepLabel';
 
 import { reportData } from '../../../constants';
 import { FormModal } from '../../../shared/FormModal';
-import { postRequest } from '../../../utils';
+import { getCurrentDate, postRequest } from '../../../utils';
 
 
-function ReportList() {
+function ReportList({ date }) {
   const [data, setData] = useState([])
+  const { username } = JSON.parse(localStorage.getItem('userInfo'))
+  const [owner] = useState(username) 
 
   const totalAmount = (data) => data.reduce((a, b) => a += b.amount, 0)
 
@@ -32,13 +43,26 @@ function ReportList() {
 
     return () => setData([])
 
-  }, [])
+  }, [date])
 
 
   async function fetchData() {
-    reportData.sort((a, b) => b.amount - a.amount)
+    const url = `http://localhost:8080/api/v1/expense?owner=${owner}&date=${date}`
+    
+    const request = new Request(url, { method: 'GET'})
+    const response = await fetch(request)
+    if (response.status === 200) { 
+      const data = await response.json();
+      data.sort((a,b) => b.amount - a.amount)
+      return data
+    }
 
-    return reportData
+    return []
+
+    // reportData.sort((a, b) => b.amount - a.amount)
+    // console.log(reportData)
+
+    // return reportData
   }
 
   return (
@@ -83,8 +107,15 @@ function StepOne() {
 
 export function Report() {
   const [modal, setModal] = useState(false)
+  const [currentDate, setCurrentDate] = useState(getCurrentDate())
 
   const handleModal = () => setModal(prev => !prev)
+
+  const handleDateChange = (value) => {
+    const dateString = value.toISOString()
+    // console.log(value.$d.toISOString(), " date on changed")
+    setCurrentDate(dateString.split('T')[0])
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -93,7 +124,13 @@ export function Report() {
           <AddIcon className="hover:text-blue-300 cursor-pointer" onClick={handleModal} />
         </h1>
       </div>
-      <ReportList />
+      <div className='bg-black'>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker defaultValue={dayjs(currentDate)}
+            inputFormat="YYYY/MM/DD" value={dayjs(currentDate)} onChange={handleDateChange} />
+        </LocalizationProvider>
+      </div>
+      <ReportList date={currentDate} />
       <FormModal open={modal} handleClose={handleModal}>
         <CreateRecord handleClose={handleModal} />
       </FormModal>
