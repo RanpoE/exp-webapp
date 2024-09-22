@@ -66,3 +66,14 @@ export const reportData = [
         time: '2024-01-02'
     },
 ]
+
+export const modalContent = [
+    {
+        name: '1',
+        source: 'https://images.freeimages.com/images/large-previews/56d/peacock-1169961.jpg'
+    },
+    {
+        name: '2',
+        source: 'https://media.istockphoto.com/id/1321954894/photo/peacock-walks-with-a-complex-tail-blue-green-colored-male-face.jpg?s=1024x1024&w=is&k=20&c=uGaTicYv6jeVH_qi115c4a3P_3AODWMUDezUPmBo-z4='
+    }
+]

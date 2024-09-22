@@ -12,7 +12,7 @@ const style = {
   width: 425,
   height: 400,
   bgcolor: '#fff',
-  borderRadius: 2
+  borderRadius: 2,
 };
 
 export function FormModal({ children, open, handleClose }){

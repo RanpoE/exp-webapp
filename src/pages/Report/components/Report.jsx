@@ -18,52 +18,11 @@ import { makeStyles } from '@mui/material';
 
 import { reportData } from '../../../constants';
 import { FormModal } from '../../../shared/FormModal';
-import { getCurrentDate, postRequest } from '../../../utils';
+import { getCurrentDate, postRequest, dateFormat } from '../../../utils';
 
 
-function ReportList({ date }) {
-  const [data, setData] = useState([])
-  const { username } = JSON.parse(localStorage.getItem('userInfo'))
-  const [owner] = useState(username) 
+function ReportList({ data }) {
 
-  const totalAmount = (data) => data.reduce((a, b) => a += b.amount, 0)
-
-  useEffect(() => {
-    async function getReport() {
-      const res = await fetchData()
-      const resCopy = [...res]
-      resCopy.push({
-        name: 'Total Amount',
-        amount: totalAmount(res),
-      })
-      setData(resCopy)
-    }
-
-    getReport()
-
-    return () => setData([])
-
-  }, [date])
-
-
-  async function fetchData() {
-    const url = `http://localhost:8080/api/v1/expense?owner=${owner}&date=${date}`
-    
-    const request = new Request(url, { method: 'GET'})
-    const response = await fetch(request)
-    if (response.status === 200) { 
-      const data = await response.json();
-      data.sort((a,b) => b.amount - a.amount)
-      return data
-    }
-
-    return []
-
-    // reportData.sort((a, b) => b.amount - a.amount)
-    // console.log(reportData)
-
-    // return reportData
-  }
 
   return (
     <ul role="list" className="divide-y divide-gray-100">
@@ -107,15 +66,57 @@ function StepOne() {
 
 export function Report() {
   const [modal, setModal] = useState(false)
-  const [currentDate, setCurrentDate] = useState(getCurrentDate())
+  const [currentDate, setCurrentDate] = useState(dateFormat())
+  const [data, setData] = useState([])
+  const { username } = JSON.parse(localStorage.getItem('userInfo'))
+  const [owner] = useState(username)
+  const [reprocess, setReprocess] = useState(false)
+
+  const totalAmount = (data) => data.reduce((a, b) => a += b.amount, 0)
+
+  useEffect(() => {
+    async function getReport() {
+      const res = await fetchData()
+      const resCopy = [...res]
+      resCopy.push({
+        name: 'Total Amount',
+        amount: totalAmount(res),
+      })
+      setData(resCopy)
+    }
+
+    getReport()
+
+    return () => setData([])
+
+  }, [currentDate, reprocess])
+
+
+  async function fetchData() {
+    const url = `http://localhost:8080/api/v1/expense?owner=${owner}&date=${currentDate}`
+
+    const request = new Request(url, { method: 'GET' })
+    const response = await fetch(request).catch(err => [])
+    if (response.status === 200) {
+      const data = await response.json();
+      data.sort((a, b) => b.amount - a.amount)
+      return data
+    }
+    return []
+
+    // reportData.sort((a, b) => b.amount - a.amount)
+    // console.log(reportData)
+
+    // return reportData
+  }
 
   const handleModal = () => setModal(prev => !prev)
 
   const handleDateChange = (value) => {
-    const dateString = value.toISOString()
-    // console.log(value.$d.toISOString(), " date on changed")
-    setCurrentDate(dateString.split('T')[0])
+    setCurrentDate(dateFormat(value))
   }
+
+  const handleToday = () => setCurrentDate(dateFormat())
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -130,26 +131,30 @@ export function Report() {
             inputFormat="YYYY/MM/DD" value={dayjs(currentDate)} onChange={handleDateChange} />
         </LocalizationProvider>
       </div>
-      <ReportList date={currentDate} />
+      <ReportList data={data} />
       <FormModal open={modal} handleClose={handleModal}>
-        <CreateRecord handleClose={handleModal} />
+        <CreateRecord handleClose={handleModal} reprocess={setReprocess} />
       </FormModal>
     </div>
   )
 }
 
 
-function CreateRecord({ handleClose }) {
+function CreateRecord({ handleClose, reprocess }) {
   const [loading, setLoading] = useState(false)
+  const [disabled, setDisabled] = useState(false)
   const { username } = JSON.parse(localStorage.getItem('userInfo', {}))
   const [expenseInput, setExpenseInput] = useState({ owner: username })
 
   const handleSubmit = async (evt) => {
     evt.preventDefault()
+    setDisabled(prev => !prev)
     const postURL = 'http://localhost:8080/api/v1/expense'
     const response = await postRequest(postURL, expenseInput, setTimeout(() => {
       handleClose();
-    }, 5000))
+      setDisabled(prev => !prev)
+      reprocess(prev => !prev)
+    }, 2000))
     console.log(response, ' Submitted')
   }
 
@@ -193,7 +198,7 @@ function CreateRecord({ handleClose }) {
     //   </form>
     // </div>
 
-    loading ? <h1>Loading</h1>
+    loading ? <div className='flex items-center'><h1>Loading</h1></div>
       :
       (<>
         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
@@ -214,23 +219,23 @@ function CreateRecord({ handleClose }) {
               <input type="amount" name="amount" id="amount" onChange={handleInputChange} className="border border-gray-30 text-sm rounded-lgblock w-full p-2.5 mb-3 text-gray-700" required />
             </div>
 
-            <button type="submit" className="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none font-medium rounded-lg my-2 text-sm px-5 py-2.5 text-center">Create </button>
+            <button type="submit" disabled={disabled} className="w-full text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none font-medium rounded-lg my-2 text-sm px-5 py-2.5 text-center">Create </button>
 
           </form>
         </div>
       </>)
   )
-  {/* <Stepper activeStep={0} alternativeLabel>
-        {steps.map((item) => (
-          <Step key={item.id}>
-            <StepLabel>
-              <span className='text-black'>{item.label}</span>
-            </StepLabel>
-            {
-              item?.component
-            }
-          </Step>
-        ))}
-      </Stepper> */}
-  {/* </div> */ }
+  // {/* <Stepper activeStep={0} alternativeLabel>
+  //       {steps.map((item) => (
+  //         <Step key={item.id}>
+  //           <StepLabel>
+  //             <span className='text-black'>{item.label}</span>
+  //           </StepLabel>
+  //           {
+  //             item?.component
+  //           }
+  //         </Step>
+  //       ))}
+  //     </Stepper> */}
+  // {/* </div> */ }
 }

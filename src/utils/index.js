@@ -30,3 +30,9 @@ export const postRequest = async (url, data, cb) => {
     cb()
 }
 // ci
+
+export const dateFormat = (date=new Date()) => {
+    const dateString = date.toISOString()
+
+    return dateString.split('T')[0]
+}

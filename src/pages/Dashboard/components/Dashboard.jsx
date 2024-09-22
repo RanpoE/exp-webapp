@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, Container, Typography } from '@mui/material'
 // import { Progress } from './Progress'
 import dayjs from 'dayjs';
-import { userDataAssets } from '../../../constants';
+import { userDataAssets, modalContent } from '../../../constants';
 import { getCurrentDate } from '../../../utils'
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import SavingsIcon from '@mui/icons-material/Savings';
@@ -13,6 +13,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
 import RadialPie from './RadialPie';
 import LineChart from './LineChart';
 import { Modal } from './Modal';
+import Carousel from '../../../shared/Carousel';
 
 
 {/* <Typography className='text-red-200'>
@@ -84,6 +85,7 @@ const Dashboard = () => {
           userAsset.map(item => <DashboardItem key={item.title} item={item} />)
         }
       </div>
+      {/* <Carousel data={modalContent} /> */}
     </div>
   )
 }
