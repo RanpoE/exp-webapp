@@ -44,7 +44,7 @@ function ReportList({ data }) {
                   {amount}
                 </dt>
               </p>
-              <p className="mt-1 text-xs leading-5 text-gray-500">Last seen <time dateTime={item?.time}>3h ago</time></p>
+              <p className="mt-1 text-xs leading-5 text-gray-500">{dateFormat(item?.date_created)}</p>
             </div>
           </li>
         )
@@ -67,6 +67,7 @@ function StepOne() {
 export function Report() {
   const [modal, setModal] = useState(false)
   const [currentDate, setCurrentDate] = useState(dateFormat())
+  const [endDate, setEndDate] = useState(dateFormat())
   const [data, setData] = useState([])
   const { username } = JSON.parse(localStorage.getItem('userInfo'))
   const [owner] = useState(username)
@@ -89,11 +90,11 @@ export function Report() {
 
     return () => setData([])
 
-  }, [currentDate, reprocess])
+  }, [currentDate, endDate, reprocess])
 
 
   async function fetchData() {
-    const url = `http://localhost:8080/api/v1/expense?owner=${owner}&date=${currentDate}`
+    const url = `http://localhost:8080/api/v1/expense?owner=${owner}&date=${currentDate}&endDate=${endDate}`
 
     const request = new Request(url, { method: 'GET' })
     const response = await fetch(request).catch(err => [])
@@ -113,7 +114,13 @@ export function Report() {
   const handleModal = () => setModal(prev => !prev)
 
   const handleDateChange = (value) => {
+    console.log(value)
     setCurrentDate(dateFormat(value))
+  }
+
+  const handleEndDateChange = (value) => {
+    console.log(value)
+    setEndDate(dateFormat(value))
   }
 
   const handleToday = () => setCurrentDate(dateFormat())
@@ -129,6 +136,8 @@ export function Report() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DesktopDatePicker defaultValue={dayjs(currentDate)}
             inputFormat="YYYY/MM/DD" value={dayjs(currentDate)} onChange={handleDateChange} />
+          <DesktopDatePicker defaultValue={dayjs(currentDate)}
+            inputFormat="YYYY/MM/DD" value={dayjs(endDate)} onChange={handleEndDateChange} />
         </LocalizationProvider>
       </div>
       <ReportList data={data} />
