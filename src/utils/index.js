@@ -37,3 +37,8 @@ export const dateFormat = (date=new Date()) => {
 
     return dateString.split('T')[0]
 }
+
+export const addDays = (day=1) => {
+    var currentDate = new Date()
+    return currentDate.setDate(currentDate.getDate() + day)
+}

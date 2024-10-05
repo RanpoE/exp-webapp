@@ -18,7 +18,11 @@ import { makeStyles } from '@mui/material';
 
 import { reportData } from '../../../constants';
 import { FormModal } from '../../../shared/FormModal';
-import { getCurrentDate, postRequest, dateFormat } from '../../../utils';
+import { getCurrentDate, postRequest, dateFormat, addDays } from '../../../utils';
+
+
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserFetch } from '../../../actions/userAction';
 
 
 function ReportList({ data }) {
@@ -67,13 +71,16 @@ function StepOne() {
 export function Report() {
   const [modal, setModal] = useState(false)
   const [currentDate, setCurrentDate] = useState(dateFormat())
-  const [endDate, setEndDate] = useState(dateFormat())
+  const [endDate, setEndDate] = useState(addDays(1))
   const [data, setData] = useState([])
   const { username } = JSON.parse(localStorage.getItem('userInfo'))
   const [owner] = useState(username)
   const [reprocess, setReprocess] = useState(false)
 
   const totalAmount = (data) => data.reduce((a, b) => a += b.amount, 0)
+
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function getReport() {
@@ -136,7 +143,7 @@ export function Report() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DesktopDatePicker defaultValue={dayjs(currentDate)}
             inputFormat="YYYY/MM/DD" value={dayjs(currentDate)} onChange={handleDateChange} />
-          <DesktopDatePicker defaultValue={dayjs(currentDate)}
+          <DesktopDatePicker defaultValue={dayjs(endDate)}
             inputFormat="YYYY/MM/DD" value={dayjs(endDate)} onChange={handleEndDateChange} />
         </LocalizationProvider>
       </div>
@@ -144,6 +151,14 @@ export function Report() {
       <FormModal open={modal} handleClose={handleModal}>
         <CreateRecord handleClose={handleModal} reprocess={setReprocess} />
       </FormModal>
+      <div>
+        <p>
+          <button onClick={() => dispatch(getUserFetch())}>Display users</button>
+        </p>
+        <div>
+          Users: <ul> {user.map((us, i) => (<li key={i}>{us.name}</li>))}</ul>
+        </div>
+      </div>
     </div>
   )
 }
