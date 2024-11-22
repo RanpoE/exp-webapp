@@ -38,4 +38,6 @@ const ReportList = ({ data }) => {
     )
 }
 
-export default React.memo(ReportList)
+const MemoizedReportList = React.memo(ReportList)
+
+export default MemoizedReportList;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 
 import dayjs from 'dayjs';
@@ -10,20 +10,20 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AddIcon from '@mui/icons-material/Add';
 
-import { makeStyles } from '@mui/material';
+import { Button, makeStyles } from '@mui/material';
 
 // import Stepper from '@mui/material/Stepper';
 // import Step from '@mui/material/Step';
 // import StepLabel from '@mui/material/StepLabel';
 
-import { reportData } from '../../../constants';
+import { ollamaResponse, reportData } from '../../../constants';
 import ReportList from './ReportList';
 import { FormModal } from '../../../shared/FormModal';
-import { getCurrentDate, postRequest, dateFormat, addDays } from '../../../utils';
+import { getCurrentDate, postRequest, dateFormat, addDays, randomNum } from '../../../utils';
 
 
 import { useSelector, useDispatch } from 'react-redux';
-import { getUserFetch } from '../../../actions/userAction';
+import { getUserFetch, hideUsers } from '../../../actions/userAction';
 
 function StepOne() {
   return (
@@ -32,6 +32,94 @@ function StepOne() {
       <button>Press here</button>
     </div>
   )
+}
+
+function Users() {
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch()
+  return (
+    <div>
+      <p>
+        <Button onClick={() => dispatch(getUserFetch())}>Display users</Button>
+        <Button onClick={() => dispatch(hideUsers())}>Hide users</Button>
+      </p>
+      <div>
+        Users: <ul> {user.map((us, i) => (<li key={i}>{us.name}</li>))}</ul>
+      </div>
+    </div>
+  )
+}
+
+export function LoadOnScroll() {
+  const [items, setItems] = useState(Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`))
+  const [hasMore, setHasMore] = useState(true)
+  const loader = useRef(null)
+
+  const loadMore = () => {
+    if (!hasMore) return;
+    setTimeout(() => {
+      setItems((prev) => {
+        const newItems = Array.from({ length: 10 }, (_, i) => `Items ${prev.length + i + 1}`)
+        return [...prev, ...newItems]
+      });
+      console.log(items.length)
+      if (items.length + 10 >= 50) {
+        setHasMore(false);
+      }
+      // Example limit
+    }, 1000);
+
+  }
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          loadMore();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+
+  }, [items, hasMore]);
+
+  return (
+    <div>
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      {hasMore && (
+        <div
+          ref={loader}
+          style={{ height: "300px", background: "lightgray", textAlign: "center" }}
+        >
+          Loading...
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChatBox() {
+  const chatResponse = ollamaResponse;
+  const { message: { content } } = chatResponse;
+  return (
+    <div>
+      <h1 className='text-xl mb-2'>Chat bot</h1>
+      <p className="mx-auto whitespace-pre-line text-gray-500">
+        {content}
+      </p>
+    </div>
+  )
+
 }
 
 export function Report() {
@@ -45,8 +133,7 @@ export function Report() {
 
   const totalAmount = (data) => data.reduce((a, b) => a += b.amount, 0)
 
-  const user = useSelector((state) => state.user.user);
-  const dispatch = useDispatch()
+
 
   useEffect(() => {
     async function getReport() {
@@ -117,14 +204,9 @@ export function Report() {
       <FormModal open={modal} handleClose={handleModal}>
         <CreateRecord handleClose={handleModal} reprocess={setReprocess} />
       </FormModal>
-      <div>
-        <p>
-          <button onClick={() => dispatch(getUserFetch())}>Display users</button>
-        </p>
-        <div>
-          Users: <ul> {user.map((us, i) => (<li key={i}>{us.name}</li>))}</ul>
-        </div>
-      </div>
+      {/* <Users /> */}
+      {/* <ChatBox /> */}
+      {/* <LoadOnScroll /> */}
     </div>
   )
 }

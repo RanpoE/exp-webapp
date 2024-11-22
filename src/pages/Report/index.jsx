@@ -1,4 +1,4 @@
-import { Report } from "./components/Report";
+import { Report, LoadOnScroll } from "./components/Report";
 
 
-export { Report }
+export { Report, LoadOnScroll }
