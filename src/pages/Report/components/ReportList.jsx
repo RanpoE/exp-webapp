@@ -1,13 +1,10 @@
 import React from 'react'
-
-
+import PropTypes from 'prop-types';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-
 
 import { dateFormat } from '../../../utils';
 
 const ReportList = ({ data }) => {
-    console.log("Rerendering ....")
     return (
         <ul role="list" className="divide-y divide-gray-100">
             {data.map((item) => {
@@ -36,6 +33,10 @@ const ReportList = ({ data }) => {
 
         </ul>
     )
+}
+
+ReportList.propTypes = {
+    data: PropTypes.array
 }
 
 const MemoizedReportList = React.memo(ReportList)

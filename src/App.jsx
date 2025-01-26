@@ -5,7 +5,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { SignUp } from './pages/Login'
 import { Home } from "./shared/Home";
 import { ProtectedRoutes } from "./shared/ProtectedRoutes";
-import { Report, LoadOnScroll } from "./pages/Report";
+import { Report } from "./pages/Report";
+import { Chat } from "./pages/Chat";
 
 const defaultTheme = createTheme({
   palette: {
@@ -25,7 +26,9 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/report" element={<Report />} />
+              <Route path="/chat" element={<Chat />} />
               {/* <Route path="/test" element={<LoadOnScroll />} /> */}
+              <Route path="chat" element={<Chat />} />
             </Route>
           </Route>
         </Routes>

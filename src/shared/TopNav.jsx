@@ -44,7 +44,7 @@ export const TopNav = () => {
 
     const handleToggleProfile = useCallback(() => setToogleMenuProfile(prev => !prev), [])
 
-    const navigationList = ['dashboard', 'report']
+    const navigationList = ['dashboard', 'report', 'chat']
 
     const navLinkStyle = "text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
 

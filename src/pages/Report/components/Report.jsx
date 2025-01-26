@@ -1,28 +1,27 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 
 
 import dayjs from 'dayjs';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AddIcon from '@mui/icons-material/Add';
 
-import { Button, makeStyles } from '@mui/material';
+import { Button } from '@mui/material';
 
 // import Stepper from '@mui/material/Stepper';
 // import Step from '@mui/material/Step';
 // import StepLabel from '@mui/material/StepLabel';
 
-import { ollamaResponse, reportData } from '../../../constants';
-import ReportList from './ReportList';
+import { ollamaResponse } from '../../../constants';
 import { FormModal } from '../../../shared/FormModal';
-import { getCurrentDate, postRequest, dateFormat, addDays, randomNum } from '../../../utils';
+import { addDays, dateFormat, getRequest, postRequest, randomNum } from '../../../utils';
+import ReportList from './ReportList';
 
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUserFetch, hideUsers } from '../../../actions/userAction';
 
 function StepOne() {
@@ -110,14 +109,147 @@ export function LoadOnScroll() {
 
 function ChatBox() {
   const chatResponse = ollamaResponse;
-  const { message: { content } } = chatResponse;
+  // const { message: { content } } = chatResponse;
+  const [messages, setMessages] = useState([])
+  const [input, setInput] = useState('')
+
+  useEffect(() => {
+    const fetchStream = async () => {
+      const response = await fetch('http://127.0.0.1:8000/dev/eval/stream')
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let done = false
+      let streamText = ''
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read()
+        done = doneReading
+
+        streamText += decoder.decode(value, { stream: true })
+        setMessages(streamText)
+
+      }
+    }
+    // fetchStream()
+  }, [])
+
+  const handleInput = (e) => {
+    const { target: { value } } = e
+    setInput(value)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input) return
+    const postURL = `http://127.0.0.1:8000/dev/eval/generate_llm?input=${input}`
+    const response = await postRequest(postURL, {}, () => { })
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let done = false
+    let streamText = ''
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read()
+      done = doneReading
+
+      streamText += decoder.decode(value, { stream: true })
+      setMessages(streamText)
+
+    }
+  }
+
   return (
-    <div>
+    <div className='max-w-max'>
       <h1 className='text-xl mb-2'>Chat bot</h1>
-      <p className="mx-auto whitespace-pre-line text-gray-500">
-        {content}
+      <p className="mx-auto  whitespace-pre-line text-md text-gray-500">
+        {messages}
       </p>
+      <input type='text' className="w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 " placeholder="Prompt" required="" onChange={handleInput} value={input} />
+      <button type='submit' onClick={handleSubmit}>Submit</button>
     </div>
+  )
+
+}
+
+function Locator() {
+  const [location, setLocation] = useState({ latitute: null, longitude: null })
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not available in your browser &#x1F47D;")
+      return
+    }
+
+    // const watchId = navigator.geolocation.watchPosition(
+    //   (position) => {
+    //     const { latitute, longitude } = position.coords;
+    //     setLocation({ latitute, longitude })
+    //   },
+    //   (err) => {
+    //     setError(err.message)
+    //   },
+    //   {
+    //     enableHighAccuracy: true,
+    //     maximumAge: 60000,
+    //     timeout: 5000
+    //   }
+    // )
+
+    const watchId = navigator.geolocation.getCurrentPosition(function (position) {
+      //Your code here
+      const { latitude, longitude } = position.coords;
+      setLocation({ latitude, longitude })
+    }, function (e) {
+      //Your error handling here
+      setError(e.message)
+    }, {
+      enableHighAccuracy: true
+    });
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId)
+    }
+  }, [])
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "20px" }}>
+      {error ? (
+        <p>Error: {error} </p>
+      ) : location.latitude && location.longitude ? (
+        <p>
+          Latitude: {location.latitude}, Longitude: {location.longitude}
+        </p>
+      ) : (
+        <p>Fetching location...</p>
+      )}
+    </div>
+  )
+}
+
+function Post({ id }) {
+  const [data, setData] = useState("")
+
+  useEffect(() => {
+    const url = `https://dummyjson.com/posts/${id}`
+    const controller = new AbortController()
+    async function getData() {
+      const text = await getRequest(url, controller)
+      console.log(text.body)
+      setData(text.body)
+    }
+    getData()
+
+    // return () => controller.abort()
+
+  }, [id])
+
+  return (
+    <>
+      <p>
+        {data}
+      </p>
+    </>
   )
 
 }
@@ -130,6 +262,7 @@ export function Report() {
   const { username } = JSON.parse(localStorage.getItem('userInfo'))
   const [owner] = useState(username)
   const [reprocess, setReprocess] = useState(false)
+  const [id, setId] = useState(1)
 
   const totalAmount = (data) => data.reduce((a, b) => a += b.amount, 0)
 
@@ -155,15 +288,14 @@ export function Report() {
 
   async function fetchData() {
     const url = `http://localhost:8080/api/v1/expense?owner=${owner}&date=${currentDate}&endDate=${endDate}`
-
-    const request = new Request(url, { method: 'GET' })
-    const response = await fetch(request).catch(err => [])
-    if (response.status === 200) {
-      const data = await response.json();
+    try {
+      const data = await getRequest(url)
       data.sort((a, b) => b.amount - a.amount)
       return data
+    } catch (err) {
+      console.error(err)
+      return []
     }
-    return []
 
     // reportData.sort((a, b) => b.amount - a.amount)
     // console.log(reportData)
@@ -174,7 +306,6 @@ export function Report() {
   const handleModal = () => setModal(prev => !prev)
 
   const handleDateChange = (value) => {
-    console.log(value)
     setCurrentDate(dateFormat(value))
   }
 
@@ -207,6 +338,12 @@ export function Report() {
       {/* <Users /> */}
       {/* <ChatBox /> */}
       {/* <LoadOnScroll /> */}
+      {/* <Locator /> */}
+      {/* <button className="bg-indigo-500 text-white px-4 py-2 rounded-md ml-2" onClick={() => setId(randomNum)}>
+        New post
+      </button> */}
+      {/* <Post id={id} /> */}
+
     </div>
   )
 }
@@ -271,10 +408,10 @@ function CreateRecord({ handleClose, reprocess }) {
     // </div>
 
     loading ? <div className='flex items-center'><h1>Loading</h1></div>
-      :
-      (
-        <>
-          {/* <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+    :
+    (
+      <>
+        {/* <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900">
               Add new record
             </h3>
@@ -297,56 +434,56 @@ function CreateRecord({ handleClose, reprocess }) {
             </form>
           </div> */}
 
-          <div className="relative p-4 w-full max-w-md max-h-full mx-auto">
-            {/* <!-- Modal content --> */}
-            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-              {/* <!-- Modal header --> */}
-              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Create New Product
-                </h3>
-                <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal" onClick={handleClose}>
-                  <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                  </svg>
-                  <span className="sr-only">Close modal</span>
-                </button>
-              </div>
-              {/* <!-- Modal body --> */}
-              <form className="p-4 md:p-5">
-                <div className="grid gap-4 mb-4 grid-cols-2">
-                  <div className="col-span-2">
-                    <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                    <input type="text" name="name" id="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="" />
-                  </div>
-                  <div className="col-span-2 sm:col-span-1">
-                    <label for="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                    <input type="number" name="price" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999" required="" />
-                  </div>
-                  <div className="col-span-2 sm:col-span-1">
-                    <label for="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-                    <select id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                      <option selected="">Select category</option>
-                      <option value="TV">TV/Monitors</option>
-                      <option value="PC">PC</option>
-                      <option value="GA">Gaming/Console</option>
-                      <option value="PH">Phones</option>
-                    </select>
-                  </div>
-                  <div className="col-span-2">
-                    <label for="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Description</label>
-                    <textarea id="description" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write product description here"></textarea>
-                  </div>
-                </div>
-                <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                  Add new product
-                </button>
-              </form>
+        <div className="relative p-4 w-full max-w-md max-h-full mx-auto">
+          {/* <!-- Modal content --> */}
+          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            {/* <!-- Modal header --> */}
+            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Create New Product
+              </h3>
+              <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal" onClick={handleClose}>
+                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span className="sr-only">Close modal</span>
+              </button>
             </div>
+            {/* <!-- Modal body --> */}
+            <form className="p-4 md:p-5">
+              <div className="grid gap-4 mb-4 grid-cols-2">
+                <div className="col-span-2">
+                  <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                  <input type="text" name="name" id="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="" />
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label for="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                  <input type="number" name="price" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999" required="" />
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label for="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                  <select id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    <option selected="">Select category</option>
+                    <option value="TV">TV/Monitors</option>
+                    <option value="PC">PC</option>
+                    <option value="GA">Gaming/Console</option>
+                    <option value="PH">Phones</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label for="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Description</label>
+                  <textarea id="description" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write product description here"></textarea>
+                </div>
+              </div>
+              <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                Add new product
+              </button>
+            </form>
           </div>
-        </>
-      )
+        </div>
+      </>
+    )
   )
   // {/* <Stepper activeStep={0} alternativeLabel>
   //       {steps.map((item) => (
